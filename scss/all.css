@@ -1,1 +1,122 @@
-/*# sourceMappingURL=all.css.map */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap");
+body {
+  min-height: 100vh;
+  background: #FFD370;
+  font-family: "Noto Sans TC", serif;
+  letter-spacing: 0.07em;
+}
+
+.user-bg {
+  background-image: linear-gradient(174deg, #FFD370 2%, #FFD370 46%, #fff 46%, #fff 100%, #e8e8e8 100%);
+}
+
+.form-control-lg {
+  border: 0;
+  outline: 0;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.card {
+  border-radius: 10px;
+  box-shadow: 0 0 15px 0 rgba(51, 51, 51, 0.15);
+}
+
+.add_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 1px;
+}
+
+.tab {
+  border-bottom: 2px solid #efefef;
+}
+.tab li {
+  padding: 0.5rem 3.675rem;
+  color: #9F9A91;
+  font-size: 14px;
+  font-weight: 700;
+}
+@media (max-width: 575px) {
+  .tab li {
+    padding: 0.5rem 2.275rem;
+  }
+}
+.tab .active {
+  color: #333;
+  border-bottom: 2px solid #000;
+}
+
+.checkbox {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  cursor: pointer;
+}
+.checkbox span {
+  line-height: 1.5;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  padding-left: 35px;
+  margin-right: 20px;
+}
+.checkbox span::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #333;
+  border-radius: 5px;
+  top: 50%;
+  left: 1.5rem;
+  transform: translateY(-50%) scale(1);
+  pointer-events: none;
+}
+.checkbox span::after {
+  content: "";
+  position: absolute;
+  top: 35%;
+  left: 2rem;
+  transform: rotate(45deg);
+  height: 15px;
+  width: 0.5rem;
+  border-radius: 1px;
+  border-bottom: 3px solid #FFD370;
+  border-right: 3px solid #FFD370;
+  pointer-events: none;
+  opacity: 0;
+}
+.checkbox input {
+  opacity: 0;
+  cursor: pointer;
+}
+.checkbox input:checked ~ span {
+  text-decoration: line-through;
+}
+.checkbox input:checked ~ span::before {
+  border-color: transparent;
+}
+.checkbox input:checked ~ span::after {
+  opacity: 1;
+}
+.checkbox .delete-btn {
+  opacity: 0;
+  color: #333;
+}
+.checkbox .delete-btn:hover {
+  opacity: 1;
+}
+@media (max-width: 575px) {
+  .checkbox .delete-btn {
+    opacity: 1;
+  }
+}
+
+.list-footer {
+  font-size: 14px;
+}
+.list-footer .delAll {
+  color: #9F9A91;
+}/*# sourceMappingURL=all.css.map */
