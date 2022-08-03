@@ -12,7 +12,7 @@
     
 </head>
 <body>
-    <div class="login wrap container mt-5">
+    <div class="login wrap container mt-5 d-none">
         <div class="row d-flex justify-content-center">
             <div class="left col-md-6 d-flex flex-column align-items-center">
                 <h1 class="logo mb-3"><img src="https://github.com/hexschool/webLayoutTraining1st/blob/master/%E5%85%AC%E7%9B%8A%E9%AB%94%E9%A9%97%E7%87%9F-Todolist/logo_lg.png?raw=true" alt="logo_lg"></h1>
@@ -39,7 +39,7 @@
             </div>
             <div class="right col-md-6 d-flex flex-column align-items-center align-items-md-start">
                 <h2 class="title fs-5 fw-bold mb-2">註冊帳號</h2>
-                <form action="" class="d-flex flex-column mx-3 mx-md-0">
+                <form id="signUpForm" action="" class="d-flex flex-column mx-3 mx-md-0">
                     <label for="signUpEmail" class="form-label fs-6 mb-0">Email</label><input type="email" id="signUpEmail" class="form-control-lg mb-2" placeholder="請輸入Email">
                     <label for="user" class="form-label fs-6 mb-0">您的暱稱</label><input type="text" id="user" class="form-control-lg mb-2" placeholder="請輸入您的暱稱">
                     <label for="signUpPassword" class="form-label fs-6 mb-0">密碼</label><input type="password" id="signUpPassword" class="form-control-lg mb-2" placeholder="請輸入密碼">
@@ -50,7 +50,7 @@
             </div>
         </div>
     </div>
-    <div class="user wrap container-fluid d-flex flex-column align-items-center mt-2 d-none">
+    <div class="user wrap container-fluid d-flex flex-column align-items-center mt-2">
         <div class="nav-bar w-100 d-flex justify-content-between">
             <h1 class="logo mb-0"><img src="https://github.com/hexschool/webLayoutTraining1st/blob/master/%E5%85%AC%E7%9B%8A%E9%AB%94%E9%A9%97%E7%87%9F-Todolist/logo.png?raw=true" alt="logo.png"></h1>
             <div class="user-group d-flex align-items-center">
@@ -58,42 +58,30 @@
                 <button class="btn">登出</button>
             </div>
         </div>
-        <div class="card input col-12 col-md-6 position-relative mt-4 mb-3 p-0">
-            <input type="text" class="form-control-lg w-100 w-md-25 p-2" placeholder="新增代辦事項">
+        <div class="card input col-12 col-md-6 col-lg-4 position-relative mt-4 mb-3 p-0">
+            <input type="text" class="txt form-control-lg w-100 w-md-25 p-2" placeholder="新增代辦事項">
             <a href="#" class="add_btn rounded-3 position-absolute end-0 me-1"><img src="https://github.com/hexschool/webLayoutTraining1st/blob/master/%E5%85%AC%E7%9B%8A%E9%AB%94%E9%A9%97%E7%87%9F-Todolist/plus%201.png?raw=true" alt="plus%201.png"></a>
         </div>
-        <div class="nodoto d-flex flex-column align-items-center mt-5">
+        <div class="notodo d-flex flex-column align-items-center mt-5">
             <p>目前尚無待辦事項</p>
             <img src="https://github.com/hexschool/webLayoutTraining1st/blob/master/%E5%85%AC%E7%9B%8A%E9%AB%94%E9%A9%97%E7%87%9F-Todolist/empty%201.png?raw=true" alt="empty%201.png">
         </div>
         
-        <!-- <div class="card card-list col-12 col-md-6">
-            <ul class="tab list-unstyled d-flex justify-content-between pt-2">
-                <li class="active">全部</li>
-                <li>待完成</li>
-                <li>已完成</li>
+        <div class="card card-list col-12 col-md-6 col-lg-4 overflow-hidden d-none">
+            <ul class="tab list-unstyled row d-flex justify-content-center pt-2">
+                <li class="active col-4">全部</li>
+                <li class="col-4">待完成</li>
+                <li class="col-4">已完成</li>
             </ul>
             <div class="card-content">
                 <ul class="list list-unstyled">
-                    <li class="checkbox position-relative w-100 d-block px-4">
-                        <input type="checkbox" class="position-absolute top-0 start-0 d-block h-100 w-100 m-0">
-                            <span class="d-block py-3">把冰箱發霉的檸檬拿去丟</span>
-                            <a href="#" class="btn delete-btn position-absolute translate-middle top-50 end-0 d-block">X</a>
-                        </input>
-                    </li>
-                    <li class="checkbox position-relative w-100 d-block px-4">
-                        <input type="checkbox" class="position-absolute top-0 start-0 d-block h-100 w-100 m-0" checked>
-                            <span class="d-block py-3">打電話叫媽媽匯款給我</span>
-                            <a href="#" class="btn delete-btn position-absolute translate-middle top-50 end-0 d-block">X</a>
-                        </input>
-                    </li>
                 </ul>
                 <div class="list-footer d-flex justify-content-between px-4">
-                    <p>5 個待完成項目</p>
+                    <p></p>
                     <a href="#" class="delAll text-decoration-none me-3">清除已完成項目</a>
                 </div>
             </div>
-        </div> -->
+        </div>
     </div>
     <script src="all.js"></script>
 </body>
