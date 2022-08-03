@@ -12,11 +12,13 @@ const cardInput = document.querySelector('.input');
 const txt = document.querySelector('.txt');
 const notodo = document.querySelector('.notodo');
 const cardList = document.querySelector('.card-list');
+const tab = document.querySelector('.tab');
 const list = document.querySelector('.list');
 const listFooter = document.querySelector('.list-footer');
+const delAll = document.querySelector('.delAll');
 let token = '';
 
-// console.log(listFooter.children);
+// console.log(delAll);
 
 // 切換頁面
 signUp.addEventListener('click',(e=>{
@@ -45,8 +47,13 @@ txt.addEventListener('keypress',(e)=>{
 list.addEventListener('click',(e)=>{
     if(e.target.nodeName === 'A'){
         deleteItem(e);
+    }else if(e.target.nodeName === 'INPUT'){
+        switchState(e);
     }
 })
+tab.addEventListener('click',(e)=>switchTab(e));
+
+delAll.addEventListener('click',(e)=>delAllBtn(e));
 
 // 登入api連接
 function callLogIn(){
@@ -101,15 +108,30 @@ function callSignUp(){
 }
 // 渲染
 function render(){
+    document.querySelector('body').setAttribute('class','user-bg');
     if(data.length !== 0){
+        let activeTab = tab.querySelector('.active').textContent
+        let checkedList = data.filter(item=>{
+            if(activeTab === '已完成'){
+                return item.state === 'checked';
+            }else if(activeTab === '待完成'){
+                return item.state === '';
+            }else{
+                return item;
+            }
+        })
         notodo.classList.add('d-none');
         cardList.classList.remove('d-none');
         let src = '';
-        data.forEach((item,index)=>{
+        checkedList.forEach((item,index)=>{
             src+=`<li data-id="${item.id}" class="checkbox position-relative w-100 d-block px-4"><input type="checkbox" class="position-absolute top-0 start-0 d-block h-100 w-100 m-0" data-num="${index}" ${item.state}><span class="d-block py-3">${item.content}</span><a href="#" class="btn delete-btn position-absolute translate-middle top-50 end-0 d-block" data-num="${index}">X</a></input></li>`
         })
         list.innerHTML = src;
-        listFooter.children[0].textContent = `${data.length} 個待完成項目`;
+        let uncheckedNum = data.filter(item=>item.state === '');
+        listFooter.children[0].textContent = `${uncheckedNum.length} 個待完成項目`;
+    }else{
+        notodo.classList.remove('d-none');
+        cardList.classList.add('d-none');
     }
 }
 // 新增
@@ -124,12 +146,42 @@ function add(){
     obj.content = txt.value;
     obj.state = "";
     data.push(obj);
-    render();
+    let tabs = document.querySelectorAll('.tab li');
+    tabs.forEach((item)=>item.classList.remove('active'));
+    tab.childNodes[1].classList.add('active');
+    render(data);
     txt.value = '';
 }
+// 刪除
 function deleteItem(e){
     let num = e.target.getAttribute('data-num');
     data.splice(num,1);
-    render();
+    render(data);
 }
-render();
+// 分類
+function switchTab(e){
+    let tabs = document.querySelectorAll('.tab li');
+    tabs.forEach((item)=>item.classList.remove('active'));
+    e.target.classList.add('active');
+    render(data);
+}
+// 更改狀態
+function switchState(e){
+    let checkId = parseInt(e.target.closest('li').dataset.id);
+    data.forEach(item => {
+        if(item.id === checkId){
+            if(item.state === 'checked' ){
+                item.state = '';
+            }else{
+                item.state = 'checked';
+            }
+        }
+    });
+    render(data);
+}
+// 刪除已完成
+function delAllBtn(e){
+    data = data.filter(item=>item.state === '')
+    render(data);
+}
+render(data);
