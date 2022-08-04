@@ -1,8 +1,9 @@
 let data = [];
 
-const APIurl = 'https://todoo.5xcamp.us/users';
+const APIurl = 'https://todoo.5xcamp.us';
 const logInWrap = document.querySelector('.login');
 const signUpWrap = document.querySelector('.signup');
+const userWrap = document.querySelector('.user');
 const signUp = document.querySelector('#signUp');
 const logIn = document.querySelector('#logIn');
 const logInForm = document.querySelector('#logInForm');
@@ -18,7 +19,7 @@ const listFooter = document.querySelector('.list-footer');
 const delAll = document.querySelector('.delAll');
 let token = '';
 
-// console.log(delAll);
+// console.log(userWrap);
 
 // 切換頁面
 signUp.addEventListener('click',(e=>{
@@ -67,9 +68,11 @@ function callLogIn(){
         textWarning.textContent = '此欄位不可為空';
         return;
     }
-    axios.post(`${APIurl}/sign_in`,obj)
+    axios.post(`${APIurl}/users/sign_in`,obj)
         .then((response)=>{
             alert(response.data.message);
+            token = response.headers.authorization;
+            getTodo(token);
         })
         .catch((error)=>{
             console.log(error);
@@ -97,7 +100,7 @@ function callSignUp(){
         }
     };
     console.log(obj);
-    axios.post(`${APIurl}`,obj)
+    axios.post(`${APIurl}/users`,obj)
         .then((response)=>{
             alert(response.data.message);
             token = response.headers.authorization;
@@ -108,7 +111,7 @@ function callSignUp(){
 }
 // 渲染
 function render(){
-    document.querySelector('body').setAttribute('class','user-bg');
+    // document.querySelector('body').setAttribute('class','user-bg');
     if(data.length !== 0){
         let activeTab = tab.querySelector('.active').textContent
         let checkedList = data.filter(item=>{
@@ -185,3 +188,13 @@ function delAllBtn(e){
     render(data);
 }
 render(data);
+
+function getTodo(token){
+    axios.get(`${APIurl}/todos`,token)
+        .then((response)=>{
+            // userWrap.classList.remove('d-none');
+            // logInWrap.classList.add('d-none');
+            console.log(response.data);
+        })
+        .catch(error=>console.log(error.response))
+}
