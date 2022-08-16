@@ -17,9 +17,11 @@ const tab = document.querySelector('.tab');
 const list = document.querySelector('.list');
 const listFooter = document.querySelector('.list-footer');
 const delAll = document.querySelector('.delAll');
+const userGroup = document.querySelector('.user-group');
 let token = '';
+let userName = '';
 
-// console.log(userWrap);
+// console.log(userGroup.childNodes[1]);
 
 // 切換頁面
 signUp.addEventListener('click',(e=>{
@@ -70,9 +72,15 @@ function callLogIn(){
     }
     axios.post(`${APIurl}/users/sign_in`,obj)
         .then((response)=>{
-            alert(response.data.message);
+            Swal.fire({
+                title:response.data.message,
+                icon: 'success'
+            });
             token = response.headers.authorization;
             getTodo(token);
+            logInForm[0].value = '';
+            logInForm[1].value = '';
+            userName = response.data.nickname;
         })
         .catch((error)=>{
             console.log(error);
@@ -82,12 +90,12 @@ function callLogIn(){
 function callSignUp(){
     for(let i = 0; i < signUpForm.length;i++){
         if(signUpForm[i].value.trim() === ''){
-            alert('請輸入資料');
+            Swal.fire('請輸入資料','','warning');
             return;
         }
     }
     if(signUpForm[2].value.trim() !== signUpForm[3].value.trim()){
-        alert('密碼不相同，請重新輸入');
+        Swal.fire('密碼不相同，請重新輸入','','warning');
         signUpForm[2].value = '';
         signUpForm[3].value = '';
         return;
@@ -99,11 +107,20 @@ function callSignUp(){
             "password" : signUpForm[2].value,
         }
     };
-    console.log(obj);
     axios.post(`${APIurl}/users`,obj)
         .then((response)=>{
-            alert(response.data.message);
+            Swal.fire({
+                title:response.data.message,
+                text:'請重新登入',
+                icon: 'success'
+            });
             token = response.headers.authorization;
+            logInWrap.classList.remove('d-none');
+            signUpWrap.classList.add('d-none');
+            signUpForm[0].value = '';
+            signUpForm[1].value = '';
+            signUpForm[2].value = '';
+            signUpForm[3].value = '';
         })
         .catch((error)=>{
             console.log(error.data);
@@ -111,14 +128,14 @@ function callSignUp(){
 }
 // 渲染
 function render(){
-    // document.querySelector('body').setAttribute('class','user-bg');
+    document.querySelector('body').setAttribute('class','user-bg');
     if(data.length !== 0){
         let activeTab = tab.querySelector('.active').textContent
         let checkedList = data.filter(item=>{
             if(activeTab === '已完成'){
-                return item.state === 'checked';
+                return item.completed_at !== null;
             }else if(activeTab === '待完成'){
-                return item.state === '';
+                return item.completed_at === null;
             }else{
                 return item;
             }
@@ -130,7 +147,7 @@ function render(){
             src+=`<li data-id="${item.id}" class="checkbox position-relative w-100 d-block px-4"><input type="checkbox" class="position-absolute top-0 start-0 d-block h-100 w-100 m-0" data-num="${index}" ${item.state}><span class="d-block py-3">${item.content}</span><a href="#" class="btn delete-btn position-absolute translate-middle top-50 end-0 d-block" data-num="${index}">X</a></input></li>`
         })
         list.innerHTML = src;
-        let uncheckedNum = data.filter(item=>item.state === '');
+        let uncheckedNum = data.filter(item=>item.completed_at === null);
         listFooter.children[0].textContent = `${uncheckedNum.length} 個待完成項目`;
     }else{
         notodo.classList.remove('d-none');
@@ -140,14 +157,11 @@ function render(){
 // 新增
 function add(){
     if(txt.value.trim() === ''){
-        alert('請輸入代辦事項');
+        Swal.fire('請輸入代辦事項','','warning');
         return;
     }
-    let id = new Date().getTime();
     let obj = {};
-    obj.id = id;
     obj.content = txt.value;
-    obj.state = "";
     data.push(obj);
     let tabs = document.querySelectorAll('.tab li');
     tabs.forEach((item)=>item.classList.remove('active'));
@@ -173,10 +187,10 @@ function switchState(e){
     let checkId = parseInt(e.target.closest('li').dataset.id);
     data.forEach(item => {
         if(item.id === checkId){
-            if(item.state === 'checked' ){
-                item.state = '';
+            if(item.completed_at !== null ){
+                item.completed_at = getTime();
             }else{
-                item.state = 'checked';
+                item.completed_at = null;
             }
         }
     });
@@ -184,17 +198,20 @@ function switchState(e){
 }
 // 刪除已完成
 function delAllBtn(e){
-    data = data.filter(item=>item.state === '')
+    data = data.filter(item=>item.completed_at !== null)
     render(data);
 }
-render(data);
 
 function getTodo(token){
-    axios.get(`${APIurl}/todos`,token)
+    axios.get(`${APIurl}/todos`,{headers:{"Authorization":token}})
         .then((response)=>{
-            // userWrap.classList.remove('d-none');
-            // logInWrap.classList.add('d-none');
-            console.log(response.data);
+            userWrap.classList.remove('d-none');
+            logInWrap.classList.add('d-none');
+            userGroup.childNodes[1].textContent = `${userName}代辦`;
+            data = response.data.todos;
+            render(data);
+            console.log(data);
+
         })
-        .catch(error=>console.log(error.response))
+        .catch(error=>console.log(error))
 }
