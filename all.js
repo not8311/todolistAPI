@@ -213,9 +213,9 @@ function deleteItem(e){
                 title:res.data.message,
                 icon: 'success'
             });
+            getTodo(token);
         })
         .catch(err=>console.log(err))
-    getTodo(token);
 }
 // 分類
 function switchTab(e){
@@ -243,14 +243,19 @@ function delAllBtn(e){
     data.forEach(item=>{
         if(item.completed_at !== null){
             axios.delete(`${APIurl}/todos/${item.id}`,{headers:{'Authorization':token}})
-                .then(res=>console.log(res))
+                .then(res=>{
+                    console.log(res);
+                    Swal.fire({
+                        title:'已刪除已完成項目',
+                        icon: 'success'
+                    });
+                    getTodo(token);
+                    let tabs = document.querySelectorAll('.tab li');
+                    tabs.forEach((item)=>item.classList.remove('active'));
+                    tab.childNodes[1].classList.add('active');
+                })
                 .catch(err=>console.log(err))
         }
-        Swal.fire({
-            title:'已刪除已完成項目',
-            icon: 'success'
-        });
-        getTodo(token);
     })
     
 }
