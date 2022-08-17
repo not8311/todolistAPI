@@ -21,7 +21,7 @@ const userGroup = document.querySelector('.user-group');
 let token = '';
 let userName = '';
 
-// console.log(userGroup.childNodes[1]);
+// console.log(userGroup.childNodes[3]);
 
 // 切換頁面
 signUp.addEventListener('click',(e=>{
@@ -33,9 +33,11 @@ logIn.addEventListener('click',(e=>{
     logInWrap.classList.remove('d-none');
 }))
 
-logInForm[2].addEventListener('click',callLogIn)
+logInForm[2].addEventListener('click',callLogIn);
 
 signUpForm[4].addEventListener('click',callSignUp);
+
+userGroup.childNodes[3].addEventListener('click',callLogout);
 
 cardInput.addEventListener('click',(e)=>{
     if(e.target.nodeName === 'IMG'){
@@ -87,6 +89,7 @@ function callLogIn(){
                 title: error.response.data.message,
                 icon: 'error'
             });
+            console.log(error);
             logInForm[0].value = '';
             logInForm[1].value = '';
         })
@@ -131,6 +134,21 @@ function callSignUp(){
             console.log(error.data);
         })
 }
+// 登出
+function callLogout(){
+    axios.delete(`${APIurl}/users/sign_out`,{headers:{'Authorization':token}})
+        .then(res=>{
+            console.log(res);
+            document.querySelector('body').setAttribute('class','');
+            userWrap.classList.add('d-none');
+            logInWrap.classList.remove('d-none');
+            Swal.fire({
+                title:res.data.message,
+                icon: 'success'
+            });
+        })
+        .catch(err=>console.log(err));
+}
 // 渲染
 function render(data){
     document.querySelector('body').setAttribute('class','user-bg');
@@ -169,51 +187,74 @@ function add(){
     let obj = {};
     obj.content = txt.value;
     data.push(obj);
+    axios.post(`${APIurl}/todos`,obj,{headers:{'Authorization':token}})
+        .then(res=>{
+            console.log(res);
+            Swal.fire({
+                title:'新增成功',
+                icon: 'success'
+            });
+            getTodo(token);
+        })
+        .catch(err=>console.log(err))
     let tabs = document.querySelectorAll('.tab li');
     tabs.forEach((item)=>item.classList.remove('active'));
     tab.childNodes[1].classList.add('active');
-    render(data);
     txt.value = '';
 }
 // 刪除
 function deleteItem(e){
-    let num = e.target.getAttribute('data-num');
-    data.splice(num,1);
-    render(data);
+    let id = e.target.closest('li').dataset.id;
+    console.log(id);
+    axios.delete(`${APIurl}/todos/${id}`,{headers:{'Authorization':token}})
+        .then(res=>{
+            console.log(res);
+            Swal.fire({
+                title:res.data.message,
+                icon: 'success'
+            });
+        })
+        .catch(err=>console.log(err))
+    getTodo(token);
 }
 // 分類
 function switchTab(e){
     let tabs = document.querySelectorAll('.tab li');
     tabs.forEach((item)=>item.classList.remove('active'));
     e.target.classList.add('active');
-    render(data);
+    getTodo(token);
 }
 // 更改狀態
 function switchState(e){
-    axios.patch(`${APIurl}/todos/eccddfa4156e27b8a1202b4a5869beff/toggle`,{},{headers:{"Authorization":token}})
-                .then(res=>console.log(res))
-                .then(token=>getTodo(token))
-                .catch(err=>console.log(err))
-    // let checkId = e.target.closest('li').dataset.id;
-    // data.forEach(item => {
-    //     if(item.id === checkId){
-    //         if(item.completed_at !== null){
-    //             item.state = '';
-    //         }else{
-    //             item.state = 'checked';
-    //         }
-            
-    //     }
-    //     console.log(item.state,item.completed_at);
-    // });
-    render(data);
+    let checkId = e.target.closest('li').dataset.id;
+    data.forEach(item => {
+        if(item.id === checkId){
+            axios.patch(`${APIurl}/todos/${item.id}/toggle`,{},{headers:{"Authorization":token}})
+            .then(res=>{
+                console.log(res);
+                getTodo(token);
+            })
+            .catch(err=>console.log(err))
+        }
+    });
 }
 // 刪除已完成
 function delAllBtn(e){
-    data = data.filter(item=>item.completed_at !== null)
-    render(data);
+    data.forEach(item=>{
+        if(item.completed_at !== null){
+            axios.delete(`${APIurl}/todos/${item.id}`,{headers:{'Authorization':token}})
+                .then(res=>console.log(res))
+                .catch(err=>console.log(err))
+        }
+        Swal.fire({
+            title:'已刪除已完成項目',
+            icon: 'success'
+        });
+        getTodo(token);
+    })
+    
 }
-
+// get列表
 function getTodo(token){
     axios.get(`${APIurl}/todos`,{headers:{"Authorization":token}})
         .then((response)=>{
