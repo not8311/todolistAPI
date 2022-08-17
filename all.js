@@ -83,7 +83,12 @@ function callLogIn(){
             userName = response.data.nickname;
         })
         .catch((error)=>{
-            console.log(error);
+            Swal.fire({
+                title: error.response.data.message,
+                icon: 'error'
+            });
+            logInForm[0].value = '';
+            logInForm[1].value = '';
         })
 }
 // 註冊api連接
@@ -127,7 +132,7 @@ function callSignUp(){
         })
 }
 // 渲染
-function render(){
+function render(data){
     document.querySelector('body').setAttribute('class','user-bg');
     if(data.length !== 0){
         let activeTab = tab.querySelector('.active').textContent
@@ -144,6 +149,7 @@ function render(){
         cardList.classList.remove('d-none');
         let src = '';
         checkedList.forEach((item,index)=>{
+            item.completed_at !== null? item.state = 'checked' : item.state = '';
             src+=`<li data-id="${item.id}" class="checkbox position-relative w-100 d-block px-4"><input type="checkbox" class="position-absolute top-0 start-0 d-block h-100 w-100 m-0" data-num="${index}" ${item.state}><span class="d-block py-3">${item.content}</span><a href="#" class="btn delete-btn position-absolute translate-middle top-50 end-0 d-block" data-num="${index}">X</a></input></li>`
         })
         list.innerHTML = src;
@@ -184,16 +190,22 @@ function switchTab(e){
 }
 // 更改狀態
 function switchState(e){
-    let checkId = parseInt(e.target.closest('li').dataset.id);
-    data.forEach(item => {
-        if(item.id === checkId){
-            if(item.completed_at !== null ){
-                item.completed_at = getTime();
-            }else{
-                item.completed_at = null;
-            }
-        }
-    });
+    axios.patch(`${APIurl}/todos/eccddfa4156e27b8a1202b4a5869beff/toggle`,{},{headers:{"Authorization":token}})
+                .then(res=>console.log(res))
+                .then(token=>getTodo(token))
+                .catch(err=>console.log(err))
+    // let checkId = e.target.closest('li').dataset.id;
+    // data.forEach(item => {
+    //     if(item.id === checkId){
+    //         if(item.completed_at !== null){
+    //             item.state = '';
+    //         }else{
+    //             item.state = 'checked';
+    //         }
+            
+    //     }
+    //     console.log(item.state,item.completed_at);
+    // });
     render(data);
 }
 // 刪除已完成
@@ -209,9 +221,8 @@ function getTodo(token){
             logInWrap.classList.add('d-none');
             userGroup.childNodes[1].textContent = `${userName}代辦`;
             data = response.data.todos;
+            // console.log(data);
             render(data);
-            console.log(data);
-
         })
         .catch(error=>console.log(error))
 }
