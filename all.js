@@ -205,7 +205,7 @@ function add(){
 // 刪除
 function deleteItem(e){
     let id = e.target.closest('li').dataset.id;
-    console.log(id);
+    // console.log(id);
     axios.delete(`${APIurl}/todos/${id}`,{headers:{'Authorization':token}})
         .then(res=>{
             console.log(res);
