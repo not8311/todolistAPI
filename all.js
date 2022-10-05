@@ -8,7 +8,7 @@ const signUp = document.querySelector('#signUp');
 const logIn = document.querySelector('#logIn');
 const logInForm = document.querySelector('#logInForm');
 const signUpForm = document.querySelector('#signUpForm');
-const textWarning = document.querySelector('.text-warning');
+const textWarning = document.querySelectorAll('.text-warning');
 const cardInput = document.querySelector('.input');
 const txt = document.querySelector('.txt');
 const notodo = document.querySelector('.notodo');
@@ -69,7 +69,8 @@ function callLogIn(){
         }
     };
     if(logInForm[0].value.trim() === '' || logInForm[1].value.trim() === ''){
-        textWarning.textContent = '此欄位不可為空';
+        logInForm[0].value.trim() === '' ? textWarning[0].style.opacity = '1' : textWarning[0].style.opacity = '0';
+        logInForm[1].value.trim() === '' ? textWarning[1].style.opacity = '1' : textWarning[1].style.opacity = '0';
         return;
     }
     axios.post(`${APIurl}/users/sign_in`,obj)
@@ -80,6 +81,9 @@ function callLogIn(){
             });
             token = response.headers.authorization;
             getTodo(token);
+            userWrap.classList.remove('d-none');
+            logInWrap.classList.add('d-none');
+            userGroup.childNodes[1].textContent = `${userName}代辦`;
             logInForm[0].value = '';
             logInForm[1].value = '';
             userName = response.data.nickname;
@@ -89,7 +93,7 @@ function callLogIn(){
                 title: error.response.data.message,
                 icon: 'error'
             });
-            console.log(error);
+            console.error(error);
             logInForm[0].value = '';
             logInForm[1].value = '';
         })
@@ -263,9 +267,7 @@ function delAllBtn(e){
 function getTodo(token){
     axios.get(`${APIurl}/todos`,{headers:{"Authorization":token}})
         .then((response)=>{
-            userWrap.classList.remove('d-none');
-            logInWrap.classList.add('d-none');
-            userGroup.childNodes[1].textContent = `${userName}代辦`;
+            
             data = response.data.todos;
             // console.log(data);
             render(data);

@@ -10,6 +10,10 @@ body {
   background-image: linear-gradient(174deg, #FFD370 2%, #FFD370 46%, #fff 46%, #fff 100%, #e8e8e8 100%);
 }
 
+.text-warning {
+  opacity: 0;
+}
+
 .form-control-lg {
   border: 0;
   outline: 0;
